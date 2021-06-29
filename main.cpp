@@ -43,7 +43,7 @@ void TangDanTenMonHoc(MonHoc *arr,int length);
 
 //---------------------------HAM CHUNG------------------------------
 char scanner(char source[]){
-
+	fflush(stdin);
 	char ketqua[100];
 	bool loop = true;
 	int i = 0;
@@ -87,6 +87,7 @@ char scanner(char source[]){
 			gotoxy(x,y);
 			cout<<" ";
 			gotoxy(x,y);
+			return 8;
 		}
 		else {
 			ketqua[i] = kytu;
@@ -127,7 +128,6 @@ bool kiemTraMaSV(LinkedSV &First, char input[]) {
 
 
 void Delete_LinkedSV(LinkedSV &First, SinhVien &sv){
-	LinkedSV q;
   if (First==NULL ) return;
 
 	// Del phan tu dau
@@ -136,12 +136,10 @@ void Delete_LinkedSV(LinkedSV &First, SinhVien &sv){
 		First = temp->next;
 		delete temp;
 	}
-	if (First==NULL ) return;
-
 
 	for (LinkedSV p = First; p->next != NULL;){
 		if (!strcmp(p->next->data.MASV, sv.MASV) ) {
-				q = p->next;
+				LinkedSV q = p->next;
 				p->next = q->next;
 				delete q;
 			}
@@ -193,14 +191,28 @@ int ChonGioiTinh(){
   } while (true);
 }
 
+void reDrawSV(int chon, char td[][100], SinhVien data) {
+	gotoxy(cot,dong+chon); 	cout << td[chon];
+	gotoxy(cot+6,dong+chon);
+	if(chon == 0) cout<<data.MASV;
+	if(chon == 1) cout<<data.HO;
+	if(chon == 2) cout<<data.TEN;
+	if(chon == 3){
+		if(data.PHAI) cout<<"Nam";
+		else cout<<"Nu";
+	}
+	if(chon == 4) cout<<data.SDT;
+	if(chon == 5) cout<<data.MALOP;
+}
+
 int NhapSinhVien(LinkedSV &linkedSV,SinhVien &data,int key){
 	int so_item = 6;
 	char td [so_item][100] = {"MASV :                                                       ",
-							"HO   :                                                       ",
-							"TEN  :                                                       ",
-							"PHAI :                                                       ",
-							"SDT  :                                                       ",
-							"MALOP:                                                       "};
+														"HO   :                                                       ",
+														"TEN  :                                                       ",
+														"PHAI :                                                       ",
+														"SDT  :                                                       ",
+														"MALOP:                                                       "};
 	Normal();
 	system("cls");   int chon =0;
 	int i;
@@ -209,15 +221,15 @@ int NhapSinhVien(LinkedSV &linkedSV,SinhVien &data,int key){
 		cout << td[i];
 		if(key == Home){
 			gotoxy(cot+6,dong+i);
-			if(i == 0) cout<<data.MASV;
-			if(i == 1) cout<<data.HO;
-			if(i == 2) cout<<data.TEN;
-			if(i == 3){
+			if(chon == 0) cout<<data.MASV;
+			if(chon == 1) cout<<data.HO;
+			if(chon == 2) cout<<data.TEN;
+			if(chon == 3){
 				if(data.PHAI) cout<<"Nam";
 				else cout<<"Nu";
 			}
-			if(i == 4) cout<<data.SDT;
-			if(i == 5) cout<<data.MALOP;
+			if(chon == 4) cout<<data.SDT;
+			if(chon == 5) cout<<data.MALOP;
 		}
 	}
 	if(key == Home) chon++; //tang chon bo qua ma sinh vien
@@ -230,47 +242,34 @@ int NhapSinhVien(LinkedSV &linkedSV,SinhVien &data,int key){
 		char temp[100]="";
 		kytu = scanner(temp);
 		switch (kytu) {
+			case Left:
+				HighLight();
+				reDrawSV(chon, td, data);
+				break;
+
+			case Right:
+				HighLight();
+				reDrawSV(chon, td, data);
+				break;
+
 			case Up :if (chon >0) {
 				Normal();
-				gotoxy(cot,dong+chon);cout << td[chon];
-				gotoxy(cot+6,dong+chon);
-
-				if(chon == 0) cout<<data.MASV;
-				if(chon == 1) cout<<data.HO;
-				if(chon == 2) cout<<data.TEN;
-				if(chon == 3){
-					if(data.PHAI) cout<<"Nam";
-					else cout<<"Nu";
-				}
-				if(chon == 4) cout<<data.SDT;
-				if(chon == 5) cout<<data.MALOP;
-
+				reDrawSV(chon, td, data);
 				chon --;
+				}
+				// rewdraw first line to not show UP ascii
 				HighLight();
-				gotoxy(cot,dong+chon); 	cout << td[chon];
-				gotoxy(cot+6,dong+chon);
-			}
-			break;
+				reDrawSV(chon, td, data);
+				break;
 
 			case Down :if (chon+1 <so_item) {
 				Normal();
-				gotoxy(cot,dong+chon);	cout << td[chon];
-				gotoxy(cot+6,dong+chon);
-				if(chon == 0) cout<<data.MASV;
-				if(chon == 1) cout<<data.HO;
-				if(chon == 2) cout<<data.TEN;
-				if(chon == 3){
-					if(data.PHAI) cout<<"Nam";
-					else cout<<"Nu";
-				}
-				if(chon == 4) cout<<data.SDT;
-				if(chon == 5) cout<<data.MALOP;
+				reDrawSV(chon, td, data);
 				chon ++;
+				}
 				HighLight();
-				gotoxy(cot,dong+chon); 	cout << td[chon];
-				gotoxy(cot+6,dong+chon);
-			}
-			break;
+				reDrawSV(chon, td, data);
+				break;
 
 			case Enter: if (chon+1 <=so_item) {
 				Normal();
@@ -296,10 +295,17 @@ int NhapSinhVien(LinkedSV &linkedSV,SinhVien &data,int key){
 				}
 				chon ++;
 				HighLight();
-				gotoxy(cot,dong+chon); 	cout << td[chon];
-				gotoxy(cot+6,dong+chon);
+				reDrawSV(chon, td, data);
 			  }
 			  break;
+
+			case 8:
+				HighLight();
+				gotoxy(cot,dong+chon); 	cout << td[chon];
+				gotoxy(cot+6,dong+chon);
+				// cout << "\b ";
+				// gotoxy(current_x - 1, current_y);
+				break;
 
 			case ESC: return 0;
 		}  // end switch
@@ -428,14 +434,15 @@ bool HienThiDanhSachSinhVien(LinkedSV &linkedSV){
 			break;
 
 			case Home:{
-				NhapSinhVien(linkedSV,sinhVien[chon],Home);
-				UpdateLinkedSV(linkedSV,sinhVien[chon]);
-				length = LengthLinkedSV(linkedSV);
-				delete [] sinhVien;
-				sinhVien = new SinhVien[length];
-				LinkedToArray(sinhVien,linkedSV);
-				chon = length - 1;
-				so_item = length;
+				if(NhapSinhVien(linkedSV,sinhVien[chon],Home)){
+					UpdateLinkedSV(linkedSV,sinhVien[chon]);
+					length = LengthLinkedSV(linkedSV);
+					delete [] sinhVien;
+					sinhVien = new SinhVien[length];
+					LinkedToArray(sinhVien,linkedSV);
+					chon = length - 1;
+					so_item = length;
+				}
 				isTrue = true;
 			}
 			break;
@@ -675,36 +682,41 @@ int HuyLop(){
   } while (true);
 }
 
-int maxMaLopTC (DSLopTinChi dsLopTinChi) {
-	int max = 0;
-	int n = dsLopTinChi.n;
-	if (n == 0) return max+1;
-	for (int i = 0; i < n; i++) {
-		LopTinChi lopTC = *dsLopTinChi.nodes[i];
-		if (lopTC.MALOPTC > max) max = lopTC.MALOPTC;
-	}
-	return max+1;
+void reDrawLopTC(int chon, char td[][100], LopTinChi lopTC) {
+	gotoxy(cot, dong+chon);
+	cout << td[chon];
+	gotoxy(cot+11, dong+chon);
+	if(chon == 0) cout << lopTC.MALOPTC;
+	if(chon == 1) cout << lopTC.MAMH;
+	if(chon == 2) cout << lopTC.NienKhoa;
+	if(chon == 3) cout << lopTC.HocKy;
+	if(chon == 4) cout << lopTC.Nhom;
+	if(chon == 5) cout << lopTC.MinSV;
+	if(chon == 6) cout << lopTC.MaxSV;
 }
 
-int NhapLopTinChi(DSLopTinChi dsLopTinChi, LopTinChi &lopTC){
+int NhapLopTinChi(LopTinChi &lopTC, int key){
 	int so_item = 8;
-	int maLopTC = maxMaLopTC(dsLopTinChi);
 	char td [so_item][100] = {"MALOPTC  :                                                       ",
-							  "MA MH    :                                                       ",
-							  "NIEN KHOA:                                                       ",
-							  "HOC KY   :                                                       ",
-							  "NHOM     :                                                       ",
-							  "SO SV MIN:                                                       ",
-							  "SO SV MAX:                                                       ",
-							  "HUY LOP	:                                                       "};
+							  						"MA MH    :                                                       ",
+							  						"NIEN KHOA:                                                       ",
+							  						"HOC KY   :                                                       ",
+							  						"NHOM     :                                                       ",
+							  						"SO SV MIN:                                                       ",
+							  						"SO SV MAX:                                                       ",
+														"LUU THONG TIN"};
 	Normal();
 	system("cls");
 	int chon = 1;
 	int i;
 	for ( i=0; i< so_item ; i++) {
-		gotoxy(cot, dong +i);
-		cout << td[i];
-		if(i == 0) cout << maLopTC;
+		if (key == Home) reDrawLopTC(i, td, lopTC);
+		else {
+			gotoxy(cot, dong+i);
+			cout << td[i];
+			gotoxy(cot+11, dong+i);
+			if(i == 0) cout << lopTC.MALOPTC;
+		}
 	}
 	HighLight();
 	gotoxy(cot, dong+chon);
@@ -715,87 +727,112 @@ int NhapLopTinChi(DSLopTinChi dsLopTinChi, LopTinChi &lopTC){
 		char temp[100]="";
 		kytu = scanner(temp);
 		switch (kytu) {
+			case Left: {
+				HighLight();
+				reDrawLopTC(chon, td, lopTC);
+			}
+
+			case Right: {
+				HighLight();
+				reDrawLopTC(chon, td, lopTC);
+			}
+
 			case Up :if (chon >1) {
 				Normal();
-				gotoxy(cot, dong+chon);
-				cout << td[chon];
-				gotoxy(cot+11, dong+chon);
-				if(chon == 1) cout << lopTC.MAMH;
-				if(chon == 2) cout << lopTC.NienKhoa;
-				if(chon == 3) cout << lopTC.HocKy;
-				if(chon == 4) cout << lopTC.Nhom;
-				if(chon == 5) cout << lopTC.MinSV;
-				if(chon == 6) cout << lopTC.MaxSV;
-				if(chon == 7) cout << lopTC.HuyLop;
+				reDrawLopTC(chon, td, lopTC);
 				chon --;
-				HighLight();
-				gotoxy(cot, dong+chon); 	cout << td[chon];
-				gotoxy(cot+11, dong+chon);
-
 			}
+			HighLight();
+			reDrawLopTC(chon, td, lopTC);
 			break;
 
 			case Down :if (chon+1 < so_item) {
 				Normal();
+				reDrawLopTC(chon, td, lopTC);
+				chon ++;
+			}
+			HighLight();
+			reDrawLopTC(chon, td, lopTC);
+			break;
+
+			case Enter: if (chon+1 <= so_item) {
+				Normal();
 				gotoxy(cot, dong+chon);	cout << td[chon];
-				gotoxy(cot+11, dong+chon);
-				if(chon == 0) cout << maLopTC;
-				if(chon == 1) cout << lopTC.MAMH;
-				if(chon == 2) cout << lopTC.NienKhoa;
-				if(chon == 3) cout << lopTC.HocKy;
-				if(chon == 4) cout << lopTC.Nhom;
-				if(chon == 5) cout << lopTC.MinSV;
-				if(chon == 6) cout << lopTC.MaxSV;
-				if(chon == 7) cout << lopTC.HuyLop;
+				gotoxy(cot+11, dong+chon); cout<< temp;
+				if(chon == 1) strcpy(lopTC.MAMH, temp);
+				if(chon == 2) {
+					int nienKhoa		= atoi(temp);
+					lopTC.NienKhoa		= nienKhoa;
+				}
+				if(chon == 3) strcpy(lopTC.HocKy, temp);
+				if(chon == 4) strcpy(lopTC.Nhom, temp);
+				if(chon == 5) {
+					int minSV			= atoi(temp);
+					lopTC.MinSV 		= minSV;
+				}
+				if(chon == 6) {
+					int maxSV			= atoi(temp);
+					lopTC.MaxSV 		= maxSV;
+				}
+				if(chon == 7) {
+					return 1;
+				}
 				chon ++;
 				HighLight();
-				gotoxy(cot, dong+chon); 	cout << td[chon];
-				gotoxy(cot+11, dong+chon);
+				reDrawLopTC(chon, td, lopTC);
 			}
 			break;
 
-//			case Enter: if (chon+1 <= so_item) {
-//				lopTC.MALOPTC = maLopTC;
-//				Normal();
-//				gotoxy(cot, dong+chon);	cout << td[chon];
-//				gotoxy(cot+11, dong+chon); cout<< temp;
-//				if(chon == 1) strcpy(lopTC.MAMH, temp);
-//				if(chon == 2) {
-//					int nienKhoa		= atoi(temp);
-//					lopTC.NienKhoa		= nienKhoa;
-//				}
-//				if(chon == 3) strcpy(lopTC.HocKy, temp);
-//				if(chon == 4) strcpy(lopTC.Nhom, temp);
-//				if(chon == 5) {
-//					int minSV			= atoi(temp);
-//					lopTC.MinSV 		= minSV;
-//				}
-//				if(chon == 6) {
-//					int maxSV			= atoi(temp);
-//					lopTC.MaxSV 		= maxSV;
-//				}
-//				if(chon == 7){
-//					HuyLop() == 1 ? lopTC.HuyLop = 1 : lopTC.HuyLop = 0;
-//					return 1;
-//				}
-//				chon ++;
-//				HighLight();
-//				gotoxy(cot,dong+chon); 	cout << td[chon];
-//				gotoxy(cot+11,dong+chon);
-//			}
-//			break;
+			case 8:
+				HighLight();
+				gotoxy(cot, dong+chon);
+				cout << td[chon];
+				gotoxy(cot+11, dong+chon);
+				// cout << "\b ";
+				// gotoxy(current_x - 1, current_y);
+				break;
 
 			case ESC: return 0;
 		}  // end switch
 	} while (true);
 }
 
-void InsertLopTinChi(DSLopTinChi &dsLopTinChi, LopTinChi &lopTC) {
+int maxMaLopTC (DSLopTinChi dsLopTinChi) {
+	LopTinChi lopTC;
+	int max = 0;
 	int n = dsLopTinChi.n;
-	NhapLopTinChi(dsLopTinChi, lopTC);
-	dsLopTinChi.nodes[n] = new LopTinChi;
-	*dsLopTinChi.nodes[n] = lopTC;
-	dsLopTinChi.n++;
+	if (n == 0) return max+1;
+	for (int i = 0; i < n; i++) {
+		lopTC = *dsLopTinChi.nodes[i];
+		if (lopTC.MALOPTC > max) max = lopTC.MALOPTC;
+	}
+	return max+1;
+}
+
+void AddLopTinChi(DSLopTinChi &dsLopTinChi, int key) {
+	LopTinChi lopTC;
+	lopTC.MALOPTC = maxMaLopTC(dsLopTinChi);
+	int n = dsLopTinChi.n;
+	if (NhapLopTinChi(lopTC, key)) {
+		dsLopTinChi.nodes[n] = new LopTinChi;
+		*dsLopTinChi.nodes[n] = lopTC;
+		dsLopTinChi.n++;
+	}
+}
+
+void UpdateLopTinChi(int chon, DSLopTinChi &dsLopTinChi, int key) {
+	LopTinChi lopTC = *dsLopTinChi.nodes[chon];
+	if (NhapLopTinChi(lopTC, key)) {
+		*dsLopTinChi.nodes[chon] = lopTC;
+	}
+}
+
+void DeleteLopTinChi(int chon, DSLopTinChi &dsLopTinChi) {
+	LopTinChi lopTC = *dsLopTinChi.nodes[chon];
+	for(int i=chon; i < dsLopTinChi.n-1; i++) {
+		*dsLopTinChi.nodes[i] = *dsLopTinChi.nodes[i+1];
+	}
+	dsLopTinChi.n--;
 }
 
 bool HienThiDanhSachLopTinChi(DSLopTinChi &dsLopTinChi){
@@ -808,16 +845,15 @@ bool HienThiDanhSachLopTinChi(DSLopTinChi &dsLopTinChi){
   bool isTrue = true;
 
 	do {
-		LopTinChi lopTC;
 		if(isTrue) {
 			Normal();
 			system("cls");
 			gotoxy(x,y);
 
-			cout << "DANH SACH LOP TIN CHI" << endl;
+			cout << setw(70) << left << " " << "DANH SACH LOP TIN CHI" << endl;
 			cout << setw(20) << left << "MALOPTC";
 			cout << setw(20) << left << "MAMH";
-			cout << setw(20) << left << "NiEN KHOA";
+			cout << setw(20) << left << "NIEN KHOA";
 			cout << setw(20) << left << "HOC KY";
 			cout << setw(20) << left << "NHOM";
 			cout << setw(20) << left << "SO SV MIN";
@@ -828,7 +864,7 @@ bool HienThiDanhSachLopTinChi(DSLopTinChi &dsLopTinChi){
 			cout << setfill(' ');
 
 			if(dsLopTinChi.n != 0){
-				for (i = 0; i < so_item; i++){
+				for (i = 0; i < dsLopTinChi.n; i++){
 					gotoxy(x,y+3+i);
 					hienThiLopTinChi(*dsLopTinChi.nodes[i]);
 				}
@@ -851,10 +887,10 @@ bool HienThiDanhSachLopTinChi(DSLopTinChi &dsLopTinChi){
 				HighLight();
 				gotoxy(x,y+chon+3);
 				hienThiLopTinChi(*dsLopTinChi.nodes[chon]);
-			}
-			break;
+				}
+				break;
 
-			case Down :if (chon+1 <so_item) {
+			case Down :if (chon+1 < dsLopTinChi.n) {
 				Normal();
 				gotoxy(x,y+chon+3);
 				hienThiLopTinChi(*dsLopTinChi.nodes[chon]);
@@ -862,44 +898,45 @@ bool HienThiDanhSachLopTinChi(DSLopTinChi &dsLopTinChi){
 				HighLight();
 				gotoxy(x,y+chon+3);
 				hienThiLopTinChi(*dsLopTinChi.nodes[chon]);
-			}
-			break;
+				}
+				break;
 
-			case Insert: {
-				InsertLopTinChi(dsLopTinChi, lopTC);
-				so_item = dsLopTinChi.n;
+			case Insert:
+				AddLopTinChi(dsLopTinChi, Insert);
+	//				length = LengthLinkedSV(linkedSV);
+	//				delete [] sinhVien;
+	// 				sinhVien = new SinhVien[length];
+	//				LinkedToArray(sinhVien,linkedSV);
+				chon = dsLopTinChi.n - 1;
 				isTrue = true;
-			}
-			break;
+				break;
 
-	//	case Home:{
-	////				UpdateSinhVien(sinhVien[chon],linkedSV);
+			case Home: if (dsLopTinChi.n > 0) {
+				UpdateLopTinChi(chon, dsLopTinChi, Home);
 	//				length = LengthLinkedSV(linkedSV);
 	//				delete [] sinhVien;
 	// 				sinhVien = new SinhVien[length];
 	//				LinkedToArray(sinhVien,linkedSV);
 	//				chon = length - 1;
 	//				so_item = length;
-	//				isTrue = true;
-	//				}
-	//				break;
+				isTrue = true;
+				}
+				break;
 
-	//	case DEL:
-	//  				{
-	//				Delete_LinkedSV(linkedSV,sinhVien[chon]);
-	//				length = LengthLinkedSV(linkedSV);
-	//				delete [] sinhVien;
-	// 				sinhVien = new SinhVien[length];
-	//				LinkedToArray(sinhVien,linkedSV);
-	//				chon = length - 1;
-	//				so_item = length;
-	//				isTrue = true;
-	//				}
-	//				break;
+			case DEL: if (dsLopTinChi.n > 0) {
+				DeleteLopTinChi(chon, dsLopTinChi);
+				chon = dsLopTinChi.n - 1;
+				isTrue = true;
+				}
+				break;
+
+			case ESC: return 0;
 
 		} // end switch
 	} while (true);
 }
+
+//--------------------------------------------MA MON HOC-------------------------------
 
 void HienThiDanhSachMonHoc(TreeBinarySearch &root){
   int searchKey = 0;
