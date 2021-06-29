@@ -37,13 +37,13 @@ void DeleteTree(TreeBinarySearch &root,char *maMH);
 void TimNodeTheMang(TreeBinarySearch x,TreeBinarySearch y);
 void SaveMonHoc(TreeBinarySearch root,FILE * f);
 void SaveFileMonHoc(TreeBinarySearch root,char *filename);
-
-
-
+void OpenFileMonHoc(TreeBinarySearch &root,char *filename);
+void HienThiDSMHTangDanTenMonHoc(TreeBinarySearch root);
+void TangDanTenMonHoc(MonHoc *arr,int length);
 
 //---------------------------HAM CHUNG------------------------------
 char scanner(char source[]){
-	
+
 	char ketqua[100];
 	bool loop = true;
 	int i = 0;
@@ -137,7 +137,7 @@ void Delete_LinkedSV(LinkedSV &First, SinhVien &sv){
 		delete temp;
 	}
 	if (First==NULL ) return;
-	
+
 
 	for (LinkedSV p = First; p->next != NULL;){
 		if (!strcmp(p->next->data.MASV, sv.MASV) ) {
@@ -244,7 +244,7 @@ int NhapSinhVien(LinkedSV &linkedSV,SinhVien &data,int key){
 				}
 				if(chon == 4) cout<<data.SDT;
 				if(chon == 5) cout<<data.MALOP;
-				
+
 				chon --;
 				HighLight();
 				gotoxy(cot,dong+chon); 	cout << td[chon];
@@ -268,21 +268,21 @@ int NhapSinhVien(LinkedSV &linkedSV,SinhVien &data,int key){
 				chon ++;
 				HighLight();
 				gotoxy(cot,dong+chon); 	cout << td[chon];
-				gotoxy(cot+6,dong+chon);	
+				gotoxy(cot+6,dong+chon);
 			}
 			break;
-			
+
 			case Enter: if (chon+1 <=so_item) {
 				Normal();
 				gotoxy(cot,dong+chon);	cout << td[chon];
 				gotoxy(cot+6,dong+chon); cout<< temp;
-				
+
 				//truong hop cap nhat khong cho sua ma sinh vien
-				if(chon == 0 && key == Insert) {     
+				if(chon == 0 && key == Insert) {
 					if(kiemTraMaSV(linkedSV, temp)) return 2;
 					else strcpy(data.MASV,temp);
 				}
-				
+
 				if(chon == 1) strcpy(data.HO,temp);
 				if(chon == 2) strcpy(data.TEN,temp);
 				if(chon == 3) {
@@ -364,13 +364,13 @@ bool HienThiDanhSachSinhVien(LinkedSV &linkedSV){
 			cout << setfill('-');
 			cout << setw(150) << "-" << endl;
 			cout << setfill(' ');
-			
+
 //			gotoxy(190,1); cout<<"Insert : Them";
 //			gotoxy(190,2); cout<<"Home: Cap Nhat";
 //			gotoxy(190,3); cout<<"Delete : Xoa";
-			
-			
-			
+
+
+
 			if(linkedSV != NULL){
 				for ( i=0; i< so_item ; i++){
 					gotoxy(x,y+1+i);
@@ -451,7 +451,7 @@ bool HienThiDanhSachSinhVien(LinkedSV &linkedSV){
 				isTrue = true;
 			}
 			break;
-			
+
 			case End:{
 					searchKey = TimKiemSinhVienByMaSV(sinhVien,so_item);
 					if(searchKey != -1){
@@ -463,10 +463,10 @@ bool HienThiDanhSachSinhVien(LinkedSV &linkedSV){
 						gotoxy(x,y+chon+1);
 						hienThiSinhVien(sinhVien[chon]);
 					}
-					
-				} 
+
+				}
 				break;
-				
+
 			case ESC: return 0;
 		}
   } while (true);
@@ -510,7 +510,7 @@ int TimKiemSinhVienByMaSV(SinhVien *arr,int length){
 		cout<<"                                     ";
 		return -1;
 	}
-	
+
 	int i = 0;
 	while(strcmp(arr[i].MASV,maSV) != 0 && i < length)
 		i++;
@@ -536,20 +536,20 @@ void HienThiDSSVTangDanTheoHoTen(LinkedSV &linkedSV){
   	int so_item = 0;
   	int chon = 0;
   	int i; char maLop[100];
-  
+
 	Normal();
 	system("cls");
 	gotoxy(x,y);
 	cout << setw(20) << left << "Nhap Ma Lop:";
 	gotoxy(x+12,y);
-	
+
 	scanner(maLop);
 	findAllSVByMaLop(maLop,linkedSV,First,so_item);
 	arrSV = new SinhVien[so_item];
 	LinkedToArray(arrSV,First);
-	
+
 	TangDanHoTenSinhVien(arrSV,so_item);
-	
+
 	Normal();
 	system("cls");
 	gotoxy(x,y);
@@ -562,15 +562,65 @@ void HienThiDSSVTangDanTheoHoTen(LinkedSV &linkedSV){
 	cout << setfill('-');
 	cout << setw(150) << "-" << endl;
 	cout << setfill(' ');
-	
+
 	if(linkedSV != NULL){
 		for ( i=0; i< so_item ; i++){
 			gotoxy(x,y+1+i);
 			hienThiSinhVien(arrSV[i]);
 		}
 	}
-	
+
 	getch();
+}
+
+
+void HienThiDSMHTangDanTenMonHoc(TreeBinarySearch root){
+  	int x = 0 ; int y = 0;
+  	MonHoc *arr;
+  	int so_item = 0;
+  	int chon = 0;
+  	int i;int lengthArr = 0; int count = 0;
+  	LengthTree(root,lengthArr);
+  	arr = new MonHoc[lengthArr];
+  	TreeToArray(root,count,arr);
+	so_item = lengthArr;
+
+	TangDanTenMonHoc(arr,so_item);
+
+	Normal();
+    system("cls");
+    gotoxy(x,y);
+
+	cout << setw(10) << left << "MAMH";
+	cout << setw(30) << left << "TENMH";
+	cout << setw(20) << left << "STCLT";
+	cout << setw(20) << left << "STCTH"<<endl;
+
+	cout << setfill('-');
+	cout << setw(80) << "-" << endl;
+	cout << setfill(' ');
+
+	if(root != NULL){
+		for ( i=0; i< so_item ; i++){
+			gotoxy(x,y+1+i);
+			HienThiMonHoc(arr[i]);
+		}
+	}
+
+	getch();
+}
+
+
+void TangDanTenMonHoc(MonHoc *arr,int length){
+	for(int i=0;i<length;i++){
+		for(int j=i+1;j<length;j++){
+			if(strcmp(arr[i].TENMH,arr[j].TENMH) > 0){
+				MonHoc temp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = temp;
+			}
+		}
+	}
 }
 
 //----------------------------------LOP TIN CHI-------------------------------------
@@ -681,7 +731,7 @@ int NhapLopTinChi(DSLopTinChi dsLopTinChi, LopTinChi &lopTC){
 				HighLight();
 				gotoxy(cot, dong+chon); 	cout << td[chon];
 				gotoxy(cot+11, dong+chon);
-				
+
 			}
 			break;
 
@@ -734,7 +784,7 @@ int NhapLopTinChi(DSLopTinChi dsLopTinChi, LopTinChi &lopTC){
 //				gotoxy(cot+11,dong+chon);
 //			}
 //			break;
-			
+
 			case ESC: return 0;
 		}  // end switch
 	} while (true);
@@ -859,12 +909,12 @@ void HienThiDanhSachMonHoc(TreeBinarySearch &root){
   LengthTree(root,lengthTree);
   MonHoc *monHoc = new MonHoc[lengthTree];
   TreeToArray(root,count,monHoc);
-  
+
   int so_item = lengthTree;
   int chon = 0;
   int i;
   char kytu; bool isTrue = true;
-  
+
 
 do {
 	MonHoc temp;
@@ -872,39 +922,39 @@ do {
     Normal();
     system("cls");
     gotoxy(x,y);
-	
-	cout << setw(10) << left << "MAMH";		
-	cout << setw(30) << left << "TENMH";	
-	cout << setw(20) << left << "STCLT";		
+
+	cout << setw(10) << left << "MAMH";
+	cout << setw(30) << left << "TENMH";
+	cout << setw(20) << left << "STCLT";
 	cout << setw(20) << left << "STCTH"<<endl;
 
-	
-	
-	
-	
-	cout << setfill('-');		
-	cout << setw(80) << "-" << endl;	
+
+
+
+
+	cout << setfill('-');
+	cout << setw(80) << "-" << endl;
 	cout << setfill(' ');
-	
-	
+
+
   if(root != NULL){
-  	for ( i=0; i< so_item ; i++){ 
+  	for ( i=0; i< so_item ; i++){
 	  	gotoxy(x,y+1+i);
 	  	HienThiMonHoc(monHoc[i]);
   	}
-  	
+
   	HighLight();
   	gotoxy(x,y+chon+1);
   	HienThiMonHoc(monHoc[chon]);
   }
-  
-  
- 
-  
+
+
+
+
   }
   isTrue = false;
-	
-	
+
+
   kytu = getch();
   if (kytu==-32) kytu = getch();
   switch (kytu) {
@@ -928,10 +978,10 @@ do {
               	HighLight();
               	gotoxy(x,y+chon+1);
               	HienThiMonHoc(monHoc[chon]);
-  				
+
   			  }
   			  break;
-  	
+
   	case DEL:
   				{
 				DeleteTree(root,monHoc[chon].MAMH);
@@ -965,7 +1015,7 @@ do {
 				isTrue = true;
 				}
 				break;
-				
+
 	case Home:{
 				NhapMonHoc(root,monHoc[chon],Home);
 				UpdateTree(root,monHoc[chon]);
@@ -980,27 +1030,27 @@ do {
 				isTrue = true;
 				}
 				break;
-				
+
   	case ESC   : {
 		  		delete [] monHoc;
 		  		return;
 	 			 }
-  
+
 //	case End   :{
 //				searchKey = TimKiemDocGiaByMADG(docGia,so_item);
 //				chon = searchKey;
 //				isTrue = true;
 //				break;
-//				} 
-	
-	
+//				}
+
+
   }  // end switch
   } while (true);
 }
 
 
 void HienThiMonHoc(MonHoc monHoc){
-	
+
 	cout << setw(10) << left << monHoc.MAMH;
 	cout << setw(30) << left << trim(monHoc.TENMH);
 	cout << setw(20) << left << monHoc.STCLT;
@@ -1083,7 +1133,7 @@ int NhapMonHoc(TreeBinarySearch &root,MonHoc &data,int key){
 			if(i == 3) cout<<data.STCTH;
 		}
 	}
-	if(key == Home) chon++; 
+	if(key == Home) chon++;
 	HighLight();
 	gotoxy(cot,dong+chon);
 	cout << td[chon];
@@ -1102,7 +1152,7 @@ int NhapMonHoc(TreeBinarySearch &root,MonHoc &data,int key){
 				if(chon == 1) cout<<data.TENMH;
 				if(chon == 2) cout<<data.STCLT;
 				if(chon == 3) cout<<data.STCTH;
-				
+
 				chon --;
 				HighLight();
 				gotoxy(cot,dong+chon); 	cout << td[chon];
@@ -1118,31 +1168,31 @@ int NhapMonHoc(TreeBinarySearch &root,MonHoc &data,int key){
 				if(chon == 1) cout<<data.TENMH;
 				if(chon == 2) cout<<data.STCLT;
 				if(chon == 3) cout<<data.STCTH;
-				chon ++; 
+				chon ++;
 				HighLight();
 				gotoxy(cot,dong+chon); 	cout << td[chon];
-				gotoxy(cot+6,dong+chon);	
+				gotoxy(cot+6,dong+chon);
 			}
 			break;
-			
+
 			case Enter: if (chon+1 <=so_item) {
 				Normal();
 				gotoxy(cot,dong+chon);	cout << td[chon];
 				gotoxy(cot+6,dong+chon); cout<< temp;
-				
+
 				//truong hop cap nhat khong cho sua ma sinh vien
-				if(chon == 0 && key == Insert) {     
+				if(chon == 0 && key == Insert) {
 					if(kiemTraMaMH(root, temp)) return 2;
 					else strcpy(data.MAMH,temp);
 				}
-				
+
 				if(chon == 1) strcpy(data.TENMH,temp);
 				if(chon == 2) data.STCLT = atoi(temp);
 				if(chon == 3){
 					data.STCTH = atoi(temp);
 					return 1;
-				} 
-				
+				}
+
 				chon ++;
 				HighLight();
 				gotoxy(cot,dong+chon); 	cout << td[chon];
@@ -1192,7 +1242,7 @@ void DeleteTree(TreeBinarySearch &root,char *maMH){
 		else if(strcmp(maMH,root->data.MAMH) > 0){
 			DeleteTree(root->right,maMH);
 		}
-		else{				
+		else{
 				TreeBinarySearch x = root;
 				if(root->left == NULL){
 					root = root->right;
@@ -1205,7 +1255,7 @@ void DeleteTree(TreeBinarySearch &root,char *maMH){
 				}
 				delete x;
 		}
-		
+
 	}
 }
 
@@ -1223,14 +1273,14 @@ void TimNodeTheMang(TreeBinarySearch x,TreeBinarySearch y){
 char* trim(char *str){
 	int length = strlen(str);
 	int x = 0;
-	
+
 	//xu ly khoang trang thu 0
 	while(str[0] == ' '){
 		for(int i =x ;i < length;i++ ){
 			str[i] = str[i+1];
 		}
 	}
-	
+
 	//xu ly khoang trang o giua
 	while(x < length){
 		if(str[x] == ' ' && str[x+1] == ' '){
@@ -1240,7 +1290,7 @@ char* trim(char *str){
 		}
 		else x++;
 	}
-	
+
 	str[length] = '\0';
 	return str;
 }
@@ -1263,7 +1313,7 @@ void SaveFileSinhVien(LinkedSV &First,char *filename) {
  for (LinkedSV p = First;p != NULL ; p=p->next)
    fwrite (&p->data, sizeof (SinhVien), 1, f);
  fclose(f);
- BaoLoi ("Da ghi xong danh sach vao file");
+
 
 }
 
@@ -1273,36 +1323,49 @@ void OpenFileSinhVien(LinkedSV &First, char *filename) {
  {  BaoLoi ("Loi mo file de doc"); return ;
  }
  while  (fread (&sv, sizeof (SinhVien), 1, f)!=0) {
-	AddLinkedSV(First,sv); 	
+	AddLinkedSV(First,sv);
  }
-    
+
  fclose(f);
- BaoLoi ("Da load xong danh sach vao bo nho");
+
 
 }
 
-//void SaveMonHoc(TreeBinarySearch root,FILE * f) {
-// if(root == NULL) return;
-// else
-// {
-// 	SaveFileMonHoc(root->left,f);
-// 	
-//	fwrite (&root->data, sizeof (MonHoc), 1, f);
-//	
-// 	SaveFileMonHoc(root->right,f);
-// }
-//
-//}
-//
-//void SaveFileMonHoc(TreeBinarySearch root,char *filename){
-//	FILE * f;
-//	if ((f=fopen(filename,"wb"))==NULL)
-//	 {
-//	 	return ;
-//	 }
-//	 SaveMonHoc(root,f);
-//	 fclose(f);
-//}
+void SaveMonHoc(TreeBinarySearch root,FILE * f) {
+ if(root == NULL) return;
+ else
+ {
+ 	SaveMonHoc(root->left,f);
+
+	fwrite (&root->data, sizeof (MonHoc), 1, f);
+
+ 	SaveMonHoc(root->right,f);
+ }
+}
+
+void SaveFileMonHoc(TreeBinarySearch root,char *filename){
+	FILE * f;
+	if ((f=fopen(filename,"wb"))==NULL)
+	 {
+	 	return ;
+	 }
+	 SaveMonHoc(root,f);
+	 fclose(f);
+}
+
+void OpenFileMonHoc(TreeBinarySearch &root,char *filename) {
+ FILE * f; MonHoc monHoc;
+ if ((f=fopen(filename,"rb"))==NULL)
+ {
+ 	 return ;
+ }
+ while  (fread (&monHoc, sizeof (MonHoc), 1, f)!=0) {
+	InsertTree(root,monHoc);
+ }
+ fclose(f);
+
+
+}
 
 
 
@@ -1316,20 +1379,23 @@ int main(int argc, char** argv) {
 	LinkedDK 		 		 	linkedDK			=    NULL;
 	TreeBinarySearch 			root     			=    NULL;
 
-	int so_item = 8;
+	int so_item = 9;
 	int chon;
 	char thucdon [so_item][100] =
 			{"1. Lop tin chi            	",
 			 "2. Sinh vien              	",
 			 "3. Mon hoc                	",
 			 "4. In DSSV tang dan ho ten 	",
-			 "4. Dang ki lop tin chi    	",
-			 "5. Huy lop tin chi        	",
-			 "6. Nhap diem              	",
-			 "7. Thoat                  	"};
-	
-	OpenFileSinhVien(linkedSV,"DSSV.TXT");	 
-	
+			 "5. In DSMH tang dan ten mon 	",
+			 "6. Dang ki lop tin chi    	",
+			 "7. Huy lop tin chi        	",
+			 "8. Nhap diem              	",
+			 "9. Thoat                  	"};
+
+	OpenFileSinhVien(linkedSV,"DSSV.TXT");
+	OpenFileMonHoc(root,"DSMH.TXT");
+	BaoLoi ("Da load xong danh sach vao bo nho");
+
 	while (1) {
 		chon = MenuDong(thucdon, so_item);
 		switch (chon) {
@@ -1338,23 +1404,28 @@ int main(int argc, char** argv) {
 
 			case 2: HienThiDanhSachSinhVien(linkedSV);
 			break;
- 
+
 			case 3: HienThiDanhSachMonHoc(root);
 			break;
 
 			case 4: HienThiDSSVTangDanTheoHoTen(linkedSV);
 			break;
 
-			case 5: gotoxy (10,20); cout << "Vua chon chuc nang " << chon;
+			case 5: HienThiDSMHTangDanTenMonHoc(root);
 			break;
 
 			case 6: gotoxy (10,20); cout << "Vua chon chuc nang " << chon;
 			break;
 
-			case 7:{
+			case 7: gotoxy (10,20); cout << "Vua chon chuc nang " << chon;
+			break;
+
+			case 9:{
 				SaveFileSinhVien(linkedSV,"DSSV.TXT");
+				SaveFileMonHoc(root,"DSMH.TXT");
+				BaoLoi ("Da ghi xong danh sach vao file");
 				return 0;
-			} 
+			}
 		} // end switch
 //         Sleep (1000);
 	}
