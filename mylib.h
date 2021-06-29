@@ -3,16 +3,14 @@
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
-
-using namespace std;
-
-
 #include <stdlib.h>
 #include <dos.h>
 #include <string.h>
 #include <windows.h>
 #include <time.h>
 #include <ctime>
+
+using namespace std;
 
 const int Enter = 13;
 const int dong =10;
