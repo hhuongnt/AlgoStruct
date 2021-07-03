@@ -3,16 +3,14 @@
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
-
-using namespace std;
-
-
 #include <stdlib.h>
 #include <dos.h>
 #include <string.h>
 #include <windows.h>
 #include <time.h>
 #include <ctime>
+
+using namespace std;
 
 const int Enter = 13;
 const int dong =10;
@@ -37,7 +35,7 @@ void gotoxy(short x,short y)
         COORD Cursor_an_Pos = { x,y};
         hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleCursorPosition(hConsoleOutput , Cursor_an_Pos);
-}  
+}
 
 int wherex( void )
 {
@@ -116,7 +114,7 @@ void HighLight () {
 int MenuDong(char td [][100],int so_item){
   Normal();
   system("cls");   int chon =0;
-  int i; 
+  int i;
   for ( i=0; i< so_item ; i++)
   { gotoxy(cot, dong +i);
     cout << td[i];
@@ -135,7 +133,7 @@ do {
               	gotoxy(cot,dong+chon);cout << td[chon];
               	chon --;
               	HighLight();
-              	gotoxy(cot,dong+chon); 	cout << td[chon];  				
+              	gotoxy(cot,dong+chon); 	cout << td[chon];
   			  }
   			  break;
   	case Down :if (chon+1 <so_item)
@@ -145,15 +143,11 @@ do {
               	chon ++;
               	HighLight();
               	gotoxy(cot,dong+chon); 	cout << td[chon];
-  				
+
   			  }
   			  break;
-  	
+
   	case Enter : return chon+1;
   }  // end switch
   } while (true);
 }
-
-
-
-

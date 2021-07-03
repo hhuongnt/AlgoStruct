@@ -7,12 +7,12 @@ struct SinhVien{
 	char 	HO[50];
 	char  	TEN[50];
 	bool 	PHAI;
-	char 	SDT[10];
+	char 	SDT[13];
 	char 	MALOP[50];
 };
 
 struct nodesv{
-	SinhVien 				data;
+	SinhVien 		data;
 	struct nodesv 	*next;
 };
 typedef nodesv* LinkedSV;
