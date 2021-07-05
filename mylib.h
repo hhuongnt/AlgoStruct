@@ -148,6 +148,7 @@ do {
   			  break;
 
   	case Enter : return chon+1;
+    case ESC: return -1;
   }  // end switch
   } while (true);
 }
