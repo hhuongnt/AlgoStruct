@@ -2039,13 +2039,6 @@ void DangKyLopTC(DSLopTinChi &dsLopTinChi,LinkedSV linkedSV){
 				loop = false;
 				break;
 
-			// case 8:
-			// 	Normal();
-			// 	gotoxy(x,y);
-			// 	cout << "Nhap Ma Sinh Vien:                                ";
-			// 	gotoxy(x+19,y);
-			// 	break;
-
 			case ESC: return;
 		}
 	}while(loop);
