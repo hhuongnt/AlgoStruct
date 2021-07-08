@@ -51,7 +51,7 @@ struct LopTinChi{
 	int 			MinSV;
 	int 			MaxSV;
 	bool 			HuyLop;
-	LinkedSV 	svPTR;
+	LinkedDK 	DSSV;
 };
 
 struct DSLopTinChi {
