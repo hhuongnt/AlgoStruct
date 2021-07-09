@@ -75,6 +75,10 @@ bool FindIndexLTC(DSLopTinChi dsLopTinChi, LopTinChi &lopTC, int &index);
 void LinkedDKToArray(SinhVien des[], LinkedDK linkedDK, LinkedSV linkedSV);
 void inSV(SinhVien *sinhVien, int index);
 bool HienThiDSDK(LinkedDK linkedDK, LinkedSV linkedSV);
+float getDiem(char *maSV, LinkedDK linkedDK);
+void HienThiNhapDiem(SinhVien sv, int i, LinkedDK linkedDK);
+void UpdateDiemLinkedDK(SinhVien sv, LinkedDK &linkedDK, char *temp);
+bool HienThiDSNhapDiem(LinkedDK linkedDK, LinkedSV linkedSV);
 bool QuanLyDSDK(DSLopTinChi &dsLopTinChi, LinkedSV linkedSV);
 
 //thay doi 2
@@ -164,7 +168,8 @@ char scanner(char source[]){
 	int i = strlen(source);
 	if (i != 0) {
 		strcpy(ketqua,source);
-		cout << source;
+		// ko in init kieu int = 0
+		if (i != 1 && source[i] != '0') cout << source;
 	}
 	int x0 = wherex(); int y0 = wherey();
 	int x,y;
@@ -744,16 +749,17 @@ bool HienThiDSDK(LinkedDK linkedDK, LinkedSV linkedSV) {
 		for(int i=0; i< so_item ; i++) {
 			inSV(sinhVienDK, i);
 		}
+
+		HighLight();
+		inSV(sinhVienDK, chon);
 	}
 
-	HighLight();
-	inSV(sinhVienDK, chon);
 	do
 	{
 		kytu = getch();
 		if (kytu==-32) kytu = getch();
 		switch (kytu) {
-			case Up: if (chon >0) {
+			case Up: if (so_item != 0 && chon >0) {
 				Normal();
 				inSV(sinhVienDK, chon);
 				chon --;
@@ -762,7 +768,7 @@ bool HienThiDSDK(LinkedDK linkedDK, LinkedSV linkedSV) {
 			}
 			break;
 
-			case Down: if (chon+1 <so_item) {
+			case Down: if (so_item != 0 && chon+1 <so_item) {
 				Normal();
 				inSV(sinhVienDK, chon);
 				chon ++;
@@ -772,14 +778,16 @@ bool HienThiDSDK(LinkedDK linkedDK, LinkedSV linkedSV) {
 				break;
 
 			case ESC: return 0;
-		}
+		}  // end switch
 	} while (true);
 }
 
-float getDiem(int index, LinkedDK linkedDK) {
-	for(int i=0; i<index; i++) linkedDK = linkedDK->next;
-	DangKy dk = linkedDK->data;
-	return dk.DIEM;
+float getDiem(char *maSV, LinkedDK linkedDK) {
+	for(LinkedDK p = linkedDK; p!= NULL; p=p->next) {
+		if(!strcmp(maSV, p->data.MASV)) {
+			return p->data.DIEM;
+		}
+	}
 }
 
 void HienThiNhapDiem(SinhVien sv, int i, LinkedDK linkedDK) {
@@ -787,7 +795,17 @@ void HienThiNhapDiem(SinhVien sv, int i, LinkedDK linkedDK) {
 	cout << setw(20) << left << sv.MASV;
 	cout << setw(50) << left << sv.HO;
 	cout << setw(20) << left << sv.TEN;
-	cout << setw(20) << left << getDiem(i, linkedDK);
+	cout << setw(20) << left << getDiem(sv.MASV, linkedDK);
+}
+
+void UpdateDiemLinkedDK(SinhVien sv, LinkedDK &linkedDK, char *temp) {
+	while(linkedDK != NULL) {
+		if(!strcmp(sv.MASV, linkedDK->data.MASV)) {
+			linkedDK->data.DIEM = atof(temp);
+			return;
+		}
+		linkedDK = linkedDK->next;
+	}
 }
 
 bool HienThiDSNhapDiem(LinkedDK linkedDK, LinkedSV linkedSV) {
@@ -822,49 +840,65 @@ bool HienThiDSNhapDiem(LinkedDK linkedDK, LinkedSV linkedSV) {
 	char kytu;
 	do
 	{
-		gotoxy(110, y+3+chon);
-		char input[1]="";
-		kytu = scanner(input);
-		switch (kytu)
-		{
-		case Up: if(chon > 0) {
-				Normal();
-				gotoxy(x,y+3+chon);
-				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-				chon--;
-				HighLight();
-				gotoxy(x,y+3+chon);
-				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-			}
-			break;
-
-		case Down :if (chon+1 <so_item) {
-				Normal();
-				gotoxy(x,y+3+chon);
-				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-				chon++;
-				HighLight();
-				gotoxy(x,y+3+chon);
-				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-			}
-			break;
-
-		case Enter:
-			Normal();
-			gotoxy(x,y+3+chon);
-			// HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-			cout << input;
-			chon++;
+		if(linkedDK == NULL) {
+			gotoxy(x, y+3);
+			cout << "Khong co sinh vien dang ky lop nay! Bam ESC de thoat!" << endl;
+			kytu = getch();
+			if (kytu == ESC) return 0;
+		}
+		else {
 			HighLight();
-			gotoxy(x,y+3+chon);
+			gotoxy(x, y+3+chon);
 			HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-			break;
+			gotoxy(110, y+3+chon);
+			char temp[100]="";
+			kytu = scanner(temp);
+			switch (kytu)
+			{
+			case Up: if (so_item > 0) {
+					if(chon > 0) {
+						Normal();
+						gotoxy(x,y+3+chon);
+						HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+						chon--;
+					}
+					HighLight();
+					gotoxy(x,y+3+chon);
+					HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+				}
+				break;
 
-		case ESC: return 0;
-		} // end switch
+			case Down : if (so_item > 0) {
+					if (chon+1 <so_item) {
+						Normal();
+						gotoxy(x,y+3+chon);
+						HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+						chon++;
+					}
+					HighLight();
+					gotoxy(x,y+3+chon);
+					HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+				}
+				break;
 
+			case Enter: if (chon <so_item && so_item > 0) {
+					UpdateDiemLinkedDK(sinhVienDK[chon], linkedDK, temp);
+					gotoxy(120, y+3+chon);
+					cout << "Da thay doi";
+					Normal();
+					gotoxy(x,y+3+chon);
+					HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+					if (chon+1 <so_item) chon++;
+					HighLight();
+					gotoxy(x,y+3+chon);
+					HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+				}
+				break;
+
+			case ESC: return 0;
+			} // end switch
+		}	// end if
 	} while (true);
-
 }
 
 bool QuanLyDSDK(DSLopTinChi &dsLopTinChi, LinkedSV linkedSV){
@@ -1292,7 +1326,7 @@ int TimKiemSinhVienByMaSV(SinhVien *arr,int length){
 	cout<<"                                     ";
 	gotoxy(170,1);
 	Normal();
-	char maSV[100];
+	char maSV[100]="";
 	cout<<"Ma sinh vien:";
 	if(scanner(maSV) == ESC){
 		gotoxy(170,1);
