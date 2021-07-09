@@ -55,12 +55,12 @@ void TangDanTenMonHoc(MonHoc *arr,int length);
 void HienThiLTC(LopTinChi &lopTC);
 void reInputLTC(int index, char td[][100]);
 void reDrawLTC(int index, char td[][100], LopTinChi lopTC);
-bool InsertLTC(DSLopTinChi dsLopTinChi, LopTinChi &lopTC, int key);
+bool InsertLTC(DSLopTinChi dsLopTinChi, LopTinChi &lopTC, int key, TreeBinarySearch root);
 int maxMaLTC (DSLopTinChi dsLopTinChi);
 void AddLTC(DSLopTinChi &dsLopTinChi, LopTinChi lopTC);
 void UpdateLTC(int index, DSLopTinChi &dsLopTinChi, int key);
 void DeleteLTC(int index, DSLopTinChi &dsLopTinChi);
-bool HienThiDSLTC(DSLopTinChi &dsLopTinChi);
+bool HienThiDSLTC(DSLopTinChi &dsLopTinChi, TreeBinarySearch root);
 
 
 // danh sach dang ky
@@ -305,7 +305,7 @@ bool LTCEmpty(LopTinChi lopTC) {
 	return 0;
 }
 
-bool InsertLTC(DSLopTinChi dsLopTinChi, LopTinChi &lopTC, int key){
+bool InsertLTC(DSLopTinChi dsLopTinChi, LopTinChi &lopTC, int key, TreeBinarySearch root){
 	int so_item = 8;
 	char td [so_item][100] = {"MALOPTC  :                                                       ",
 							  						"MA MH    :                                                       ",
@@ -368,7 +368,10 @@ bool InsertLTC(DSLopTinChi dsLopTinChi, LopTinChi &lopTC, int key){
 			break;
 
 			case Enter: if (chon+1 <= so_item) {
-				if(chon == 1) strcpy(lopTC.MAMH, temp);
+				if(chon == 1) {
+					if(TrungMaMH(root, temp)) strcpy(lopTC.MAMH, temp);
+					else MessageBox(NULL, "Ma mon hoc khong ton tai", "Error", MB_OK);
+				}
 				if(chon == 2) lopTC.NienKhoa = atoi(temp);
 				if(chon == 3) strcpy(lopTC.HocKy, temp);
 				if(chon == 4) strcpy(lopTC.Nhom, temp);
@@ -376,6 +379,10 @@ bool InsertLTC(DSLopTinChi dsLopTinChi, LopTinChi &lopTC, int key){
 				if(chon == 6) lopTC.MaxSV = atoi(temp);
 				if(chon == 7) {
 					if (LTCEmpty(lopTC)) break;
+					if (lopTC.MinSV > lopTC.MaxSV) {
+						MessageBox(NULL, "So sinh vien max phai lon hon min", "Error", MB_OK);
+						break;
+					}
 					return 1;
 				}
 				Normal();
@@ -410,9 +417,9 @@ void AddLTC(DSLopTinChi &dsLopTinChi, LopTinChi lopTC) {
 	dsLopTinChi.n++;
 }
 
-void UpdateLTC(int index, DSLopTinChi &dsLopTinChi, int key) {
+void UpdateLTC(int index, DSLopTinChi &dsLopTinChi, int key, TreeBinarySearch root) {
 	LopTinChi lopTC = *dsLopTinChi.nodes[index];
-	if (InsertLTC(dsLopTinChi, lopTC, key)) {
+	if (InsertLTC(dsLopTinChi, lopTC, key, root)) {
 		*dsLopTinChi.nodes[index] = lopTC;
 	}
 }
@@ -425,7 +432,7 @@ void DeleteLTC(int index, DSLopTinChi &dsLopTinChi) {
 	dsLopTinChi.n--;
 }
 
-bool HienThiDSLTC(DSLopTinChi &dsLopTinChi){
+bool HienThiDSLTC(DSLopTinChi &dsLopTinChi, TreeBinarySearch root){
   int x = 0; int y = 0;
   int chon = 0;
   char kytu;
@@ -491,14 +498,14 @@ bool HienThiDSLTC(DSLopTinChi &dsLopTinChi){
 				break;
 
 			case Insert: {
-				if (InsertLTC(dsLopTinChi, lopTC, Insert)) AddLTC(dsLopTinChi, lopTC);
+				if (InsertLTC(dsLopTinChi, lopTC, Insert, root)) AddLTC(dsLopTinChi, lopTC);
 				chon = dsLopTinChi.n - 1;
 				isTrue = true;
 				}
 				break;
 
 			case Home: if (dsLopTinChi.n > 0) {
-				UpdateLTC(chon, dsLopTinChi, Home);
+				UpdateLTC(chon, dsLopTinChi, Home, root);
 				isTrue = true;
 				}
 				break;
@@ -2501,7 +2508,7 @@ int main(int argc, char** argv) {
 	while (1) {
 		chon = MenuDong(thucdon, so_item);
 		switch (chon) {
-			case 1: HienThiDSLTC(dsLopTinChi);
+			case 1: HienThiDSLTC(dsLopTinChi, root);
 			break;
 
 			case 2: QuanLyDSDK(dsLopTinChi, linkedSV);
