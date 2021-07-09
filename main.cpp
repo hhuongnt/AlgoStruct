@@ -108,7 +108,7 @@ int getSlotLopTC(LinkedDK First);
 
 
 
-
+void HienThiBangDiemMH(DSLopTinChi dsLopTinChi, LinkedSV linkedSV, TreeBinarySearch root);
 
 
 
@@ -166,8 +166,7 @@ char scanner(char source[]){
 	int i = strlen(source);
 	if (i != 0) {
 		strcpy(ketqua,source);
-		// ko in init kieu int = 0
-		if (i != 1 && source[i] != '0') cout << source;
+		cout << source;
 	}
 	int x0 = wherex(); int y0 = wherey();
 	int x,y;
@@ -232,6 +231,7 @@ bool isNumEmpty(int data) {
 
 char* intToChars(int num) {
 	char temp[100]="";
+	if (num == 0) return temp;
 	return itoa(num, temp, 10); // decimal - base10
 }
 
@@ -461,7 +461,7 @@ bool HienThiDSLTC(DSLopTinChi &dsLopTinChi){
 			cout << setw(20) << left << "HUY" <<endl;
 
 			cout << setfill('-');
-			cout << setw(170) << "-" << endl;
+			cout << setw(150) << "-" << endl;
 			cout << setfill(' ');
 
 			if(dsLopTinChi.n != 0){
@@ -771,12 +771,14 @@ void HienThiNhapDiem(SinhVien sv, int i, LinkedDK linkedDK) {
 }
 
 void UpdateDiemLinkedDK(SinhVien sv, LinkedDK &linkedDK, char *temp) {
-	while(linkedDK != NULL) {
-		if(!strcmp(sv.MASV, linkedDK->data.MASV)) {
-			linkedDK->data.DIEM = atof(temp);
+	float diem = atof(temp);
+	if (diem < 0 || diem > 10) return;
+
+	for (LinkedDK p = linkedDK; p != NULL; p=p->next) {
+		if(!strcmp(sv.MASV, p->data.MASV)) {
+			p->data.DIEM = diem;
 			return;
 		}
-		linkedDK = linkedDK->next;
 	}
 }
 
@@ -807,69 +809,62 @@ bool HienThiDSNhapDiem(LinkedDK linkedDK, LinkedSV linkedSV) {
 			gotoxy(x,y+3+i);
 			HienThiNhapDiem(sinhVienDK[i], i, linkedDK);
 		}
+		HighLight();
+		gotoxy(x, y+3+chon);
+		HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
 	}
+
 
 	char kytu;
 	do
 	{
 		if(linkedDK == NULL) {
-			gotoxy(x, y+3);
-			cout << "Khong co sinh vien dang ky lop nay! Bam ESC de thoat!" << endl;
 			kytu = getch();
-			if (kytu == ESC) return 0;
+			while (kytu != ESC) kytu = getch();
+			return 0;
 		}
-		else {
+
+		gotoxy(110, y+3+chon);
+		char temp[100]="";
+		kytu = scanner(temp);
+		switch (kytu)
+		{
+		case Up: if(chon > 0) {
+				Normal();
+				gotoxy(x,y+3+chon);
+				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+				chon--;
+			}
 			HighLight();
-			gotoxy(x, y+3+chon);
+			gotoxy(x,y+3+chon);
 			HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-			gotoxy(110, y+3+chon);
-			char temp[100]="";
-			kytu = scanner(temp);
-			switch (kytu)
-			{
-			case Up: if (so_item > 0) {
-					if(chon > 0) {
-						Normal();
-						gotoxy(x,y+3+chon);
-						HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-						chon--;
-					}
-					HighLight();
-					gotoxy(x,y+3+chon);
-					HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-				}
-				break;
+			break;
 
-			case Down : if (so_item > 0) {
-					if (chon+1 <so_item) {
-						Normal();
-						gotoxy(x,y+3+chon);
-						HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-						chon++;
-					}
-					HighLight();
-					gotoxy(x,y+3+chon);
-					HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-				}
-				break;
+		case Down : if (chon+1 <so_item) {
+				Normal();
+				gotoxy(x,y+3+chon);
+				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+				chon++;
+			}
+			HighLight();
+			gotoxy(x,y+3+chon);
+			HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+			break;
 
-			case Enter: if (chon <so_item && so_item > 0) {
-					UpdateDiemLinkedDK(sinhVienDK[chon], linkedDK, temp);
-					gotoxy(120, y+3+chon);
-					cout << "Da thay doi";
-					Normal();
-					gotoxy(x,y+3+chon);
-					HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-					if (chon+1 <so_item) chon++;
-					HighLight();
-					gotoxy(x,y+3+chon);
-					HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
-				}
-				break;
+		case Enter: if (chon <so_item) {
+				UpdateDiemLinkedDK(sinhVienDK[chon], linkedDK, temp);
+				Normal();
+				gotoxy(x,y+3+chon);
+				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+				if (chon+1 <so_item) chon++;
+				HighLight();
+				gotoxy(x,y+3+chon);
+				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+			}
+			break;
 
-			case ESC: return 0;
-			} // end switch
-		}	// end if
+		case ESC: return 0;
+		} // end switch
 	} while (true);
 }
 
@@ -1622,9 +1617,12 @@ void InsertTree(TreeBinarySearch &root,MonHoc monHoc){
 		root->right = NULL;
 	}
 	else {
+		// maMH < root.maMH
 		if(strcmp(root->data.MAMH,monHoc.MAMH) > 0){
 			InsertTree(root->left,monHoc);
 		}
+
+		// maMH > root.maMH
 		else if(strcmp(root->data.MAMH,monHoc.MAMH) < 0){
 			InsertTree(root->right,monHoc);
 		}
@@ -2398,6 +2396,90 @@ void findAllLopTCDangMoByNienKhoaAndHocKy(LopTinChi *arr,int &lengthArr,int nien
 }
 
 
+//---------------------In bang diem mon hoc--------------------------
+void HienThiBangDiemMH(DSLopTinChi dsLopTinChi, LinkedSV linkedSV, TreeBinarySearch root) {
+	// find LTC va DSDK
+	LopTinChi lopTC = {};
+	int index;
+	FindIndexLTC(dsLopTinChi, lopTC, index);
+	lopTC = *dsLopTinChi.nodes[index];
+	LinkedDK linkedDK = lopTC.DSSV;
+
+	// get SV array
+	int so_item = LengthLinkedDK(linkedDK);
+	SinhVien *sinhVienDK = new SinhVien[so_item];
+	LinkedDKToArray(sinhVienDK, linkedDK, linkedSV);
+
+	// get ten mon hoc
+	TreeBinarySearch nodeMH = SearchTree(root, lopTC.MAMH);
+	char tenMH[50]="";
+	strcpy(tenMH, nodeMH->data.TENMH);
+
+	int x = 0; int y = 0;
+	int chon = 0;
+	Normal();
+	system("cls");
+	gotoxy(x,y);
+
+	cout << endl;
+	cout << setw(50) << left << " " << "BANG DIEM MON HOC: " << tenMH << endl;
+	cout << setw(40) << left << " ";
+	cout <<  "Nien khoa: " << lopTC.NienKhoa << "        ";
+	cout << "Hoc ky: " << lopTC.HocKy << "        ";
+	cout << "Nhom: " << lopTC.Nhom << endl << endl;
+
+	cout << setw(20) << left << "STT";
+	cout << setw(20) << left << "MASV";
+	cout << setw(50) << left << "HO";
+	cout << setw(20) << left << "TEN";
+	cout << setw(20) << left << "DIEM" << endl;
+
+	cout << setfill('-');
+	cout << setw(150) << "-" << endl;
+	cout << setfill(' ');
+
+	if(linkedDK != NULL) {
+		for(int i=0; i< so_item ; i++) {
+			gotoxy(x,y+6+i);
+			HienThiNhapDiem(sinhVienDK[i], i, linkedDK);
+		}
+		HighLight();
+		gotoxy(x, y+6+chon);
+		HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+	}
+
+	char kytu;
+	do
+	{
+		kytu = getch();
+		switch (kytu)
+		{
+		case Up: if(chon > 0 && linkedDK != NULL) {
+				Normal();
+				gotoxy(x,y+6+chon);
+				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+				chon--;
+				HighLight();
+				gotoxy(x,y+6+chon);
+				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+			}
+			break;
+
+		case Down : if (chon+1 <so_item && linkedDK != NULL) {
+				Normal();
+				gotoxy(x,y+6+chon);
+				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+				chon++;
+				HighLight();
+				gotoxy(x,y+6+chon);
+				HienThiNhapDiem(sinhVienDK[chon], chon, linkedDK);
+			}
+			break;
+
+		case ESC: return;
+		} // end switch
+	} while (true);
+}
 
 
 //-------------------------------------MAIN---------------------------------------
@@ -2420,8 +2502,8 @@ int main(int argc, char** argv) {
 			 "7.  Dang ki lop tin chi                         ",
 			 "8.  Huy lop tin chi                             ",
 			 "9.  In bang diem mon hoc                        ",
-			 "10. In diem TB ket thuc khoa hoc       ",
-			 "11. Thoat                                      ",};
+			 "10. In diem TB ket thuc khoa hoc                ",
+			 "11. Thoat                                       ",};
 
 	OpenFileLopTinChi(dsLopTinChi);
 	OpenFileSinhVien(linkedSV,"DSSV.TXT");
@@ -2455,7 +2537,7 @@ int main(int argc, char** argv) {
 			case 8: hienThiHuyLop(dsLopTinChi);
 			break;
 
-			case 9:
+			case 9: HienThiBangDiemMH(dsLopTinChi, linkedSV, root);
 			break;
 
 			case 10:
