@@ -277,17 +277,9 @@ void reDrawLTC(int index, char td[][100], LopTinChi lopTC) {
 	}
 }
 
-bool maMHTonTai(char *maMH) {
-	return 1;
-}
-
 bool LTCEmpty(LopTinChi lopTC) {
 	if(isStringEmpty(lopTC.MAMH)) {
 		MessageBox(NULL, "Chua nhap ma mon hoc", "Error", MB_OK);
-		return 1;
-	}
-	if(!maMHTonTai(lopTC.MAMH)) {
-		MessageBox(NULL, "Ma mon hoc khong ton tai", "Error", MB_OK);
 		return 1;
 	}
 	if(isNumEmpty(lopTC.NienKhoa)) {
@@ -311,10 +303,6 @@ bool LTCEmpty(LopTinChi lopTC) {
 		return 1;
 	}
 	return 0;
-}
-
-bool TrungKeyLTC(LopTinChi lopTC) {
-
 }
 
 bool InsertLTC(DSLopTinChi dsLopTinChi, LopTinChi &lopTC, int key){
